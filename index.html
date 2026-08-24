@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>长赢指数投资计划 - 跟投同步信息表</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; background:#f5f7fa; color:#333; line-height:1.6; padding:20px; }
+.container { max-width:1400px; margin:0 auto; }
+header { background:linear-gradient(135deg,#1a73e8,#0d47a1); color:white; padding:24px 32px; border-radius:12px; margin-bottom:24px; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+header h1 { font-size:24px; font-weight:600; margin-bottom:8px; }
+header .subtitle { font-size:14px; opacity:0.9; }
+.controls { display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+.tabs { display:flex; background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.tab { padding:12px 24px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s; border:none; background:white; }
+.tab:hover { background:#e8f0fe; }
+.tab.active { background:#1a73e8; color:white; }
+.btn { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-size:13px; font-weight:500; transition:all 0.2s; }
+.btn-primary { background:#1a73e8; color:white; }
+.btn-primary:hover { background:#1557b0; }
+.btn-secondary { background:#e8eaed; color:#333; }
+.btn-secondary:hover { background:#d2d5d9; }
+.btn-success { background:#34a853; color:white; }
+.btn-success:hover { background:#2d8e47; }
+.btn-warning { background:#fbbc04; color:#333; }
+.btn-warning:hover { background:#e5ac00; }
+.status-bar { display:flex; align-items:center; gap:12px; font-size:13px; color:#666; margin-left:auto; }
+.plan-info { background:white; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.plan-info h2 { font-size:18px; margin-bottom:12px; color:#1a73e8; }
+.plan-stats { display:flex; gap:24px; flex-wrap:wrap; }
+.stat-item { text-align:center; }
+.stat-value { font-size:20px; font-weight:600; color:#333; }
+.stat-value.positive { color:#34a853; }
+.stat-value.negative { color:#ea4335; }
+.stat-label { font-size:12px; color:#666; margin-top:4px; }
+.category-section { background:white; border-radius:12px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
+.category-header { padding:16px 20px; background:#f8f9fa; border-bottom:1px solid #e8eaed; display:flex; align-items:center; justify-content:space-between; }
+.category-header h3 { font-size:15px; font-weight:600; }
+.category-meta { font-size:13px; color:#666; }
+.category-meta span { margin-left:12px; }
+table { width:100%; border-collapse:collapse; }
+th { padding:10px 12px; text-align:left; font-size:12px; font-weight:600; color:#666; background:#fafbfc; border-bottom:1px solid #e8eaed; white-space:nowrap; }
+td { padding:10px 12px; font-size:13px; border-bottom:1px solid #f0f2f5; }
+tr:last-child td { border-bottom:none; }
+tr:hover { background:#f8f9fa; }
+.fund-name { font-weight:500; color:#1a73e8; }
+.fund-code { color:#666; font-family:monospace; font-size:12px; }
+.shares-input { width:70px; padding:4px 8px; border:1px solid #d2d5d9; border-radius:4px; text-align:center; font-size:13px; }
+.shares-input:focus,.note-input:focus { outline:none; border-color:#1a73e8; box-shadow:0 0 0 2px rgba(26,115,232,0.2); }
+.note-input { width:120px; padding:4px 8px; border:1px solid #d2d5d9; border-radius:4px; font-size:12px; }
+.advice-badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; }
+.advice-buy { background:#e6f4ea; color:#1e7e34; }
+.advice-sell { background:#fce8e6; color:#c5221f; }
+.advice-hold { background:#e8f0fe; color:#1a73e8; }
+.advice-none { background:#f1f3f4; color:#999; }
+.positive-return { color:#34a853; font-weight:500; }
+.negative-return { color:#ea4335; font-weight:500; }
+.nav-date { font-size:11px; color:#999; }
+.settings-panel { background:white; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.settings-panel h3 { font-size:16px; margin-bottom:12px; }
+.settings-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; font-size:13px; }
+.settings-row label { min-width:120px; color:#666; }
+.settings-row input { padding:6px 10px; border:1px solid #d2d5d9; border-radius:4px; width:100px; }
+.hidden { display:none; }
+.advice-summary { margin-top:20px; }
+.advice-summary h3 { font-size:16px; margin-bottom:12px; }
+.advice-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:16px; }
+.advice-card { padding:16px; border-radius:8px; font-size:13px; }
+.advice-card.buy { background:#e6f4ea; border:1px solid #a8dab5; }
+.advice-card.sell { background:#fce8e6; border:1px solid #f5c6cb; }
+.advice-card h4 { font-size:14px; margin-bottom:8px; font-weight:600; }
+.advice-card ul { padding-left:16px; font-size:12px; }
+.advice-card li { margin-bottom:4px; }
+.empty-msg { color:#666; font-size:13px; margin-top:8px; }
+.modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.active { display:flex; }
+.modal { background:white; border-radius:12px; padding:24px; max-width:700px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 10px 30px rgba(0,0,0,0.2); position:relative; }
+.modal h2 { font-size:18px; margin-bottom:16px; color:#1a73e8; }
+.modal p { font-size:13px; color:#555; margin-bottom:12px; line-height:1.6; }
+.modal ol { padding-left:20px; margin-bottom:16px; font-size:13px; color:#555; }
+.modal li { margin-bottom:8px; }
+.modal code { background:#f1f3f4; padding:2px 6px; border-radius:4px; font-size:12px; font-family:monospace; }
+.modal textarea { width:100%; border:1px solid #d2d5d9; border-radius:6px; padding:10px; font-family:monospace; font-size:12px; resize:vertical; margin-bottom:12px; }
+.modal .close-btn { position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:#999; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:16px; }
+.kpi { background:white; border-radius:12px; padding:16px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.kpi .v { font-size:22px; font-weight:700; }
+.kpi .l { font-size:12px; color:#666; margin-top:4px; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:16px; margin-bottom:16px; }
+.stat-card { background:white; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.stat-card h3 { font-size:15px; margin-bottom:16px; color:#333; }
+.stat-card.wide { grid-column:1/-1; }
+.donut-flex { display:flex; gap:20px; align-items:center; justify-content:center; flex-wrap:wrap; }
+.pie-legend { display:flex; flex-direction:column; gap:6px; font-size:12px; color:#555; }
+.pie-legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+.legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#666; margin-bottom:10px; }
+.legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; }
+.hbar-row { margin-bottom:10px; }
+.hbar-label { font-size:12px; color:#555; margin-bottom:3px; display:flex; justify-content:space-between; gap:8px; }
+.hbar-track { background:#f1f3f4; border-radius:4px; height:10px; overflow:hidden; }
+.hbar-fill { height:10px; border-radius:4px; }
+@media (max-width:768px) {
+  body { padding:12px; }
+  .controls { flex-direction:column; align-items:stretch; }
+  .status-bar { margin-left:0; }
+  table { font-size:12px; }
+  th,td { padding:8px 6px; }
+  .shares-input { width:50px; font-size:12px; }
+  .note-input { width:80px; }
+  .modal { padding:16px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📊 长赢指数投资计划 - 跟投同步信息表</h1>
+    <div class="subtitle">实时同步官方持仓 · 智能对比跟投份额 · 调仓建议 · 统计分析 | 本地离线可用</div>
+  </header>
+  <div class="controls">
+    <div class="tabs">
+      <button class="tab active" onclick="switchPlan('LONG_WIN', this)">150计划</button>
+      <button class="tab" onclick="switchPlan('LONG_WIN_S', this)">S计划</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" id="viewDetailTab" onclick="switchView('detail')">📋 持仓明细</button>
+      <button class="tab" id="viewStatsTab" onclick="switchView('stats')">📊 统计分析</button>
+    </div>
+    <button class="btn btn-warning" onclick="openSyncModal()">🔄 同步最新数据</button>
+    <button class="btn btn-secondary" onclick="exportData()">📥 导出</button>
+    <button class="btn btn-secondary" onclick="importData()">📤 导入</button>
+    <button class="btn btn-success" onclick="toggleSettings()">⚙️ 设置</button>
+    <div class="status-bar">
+      <span id="statusText" style="color:#34a853; font-weight:500;">内置最新数据已加载</span>
+      <span id="lastUpdate" style="color:#999;"></span>
+    </div>
+  </div>
+  <div id="settingsPanel" class="settings-panel hidden">
+    <h3>⚙️ 调仓建议参数设置</h3>
+    <div class="settings-row"><label>容差比例(%)：</label><input type="number" id="toleranceInput" value="10" min="1" max="50"><span style="color:#666; font-size:12px;">偏差超过此百分比时提示调仓</span></div>
+    <div class="settings-row"><label>最小份数差：</label><input type="number" id="minDiffInput" value="1" min="1" max="10"><span style="color:#666; font-size:12px;">份数偏差至少达到此值才提示</span></div>
+    <div style="margin-top:12px;"><button class="btn btn-primary" onclick="saveSettings()">保存设置</button> <button class="btn btn-secondary" onclick="toggleSettings()">取消</button></div>
+  </div>
+  <div id="planInfo" class="plan-info"></div>
+  <div id="detailWrap">
+    <div id="compositionContainer"></div>
+    <div id="adviceSummary" class="advice-summary"></div>
+  </div>
+  <div id="statsWrap" class="hidden">
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><h3>🎯 跟投完成度</h3><div id="chartCompletion" class="donut-flex"></div></div>
+      <div class="stat-card"><h3>🧭 跟投状态分布</h3><div id="chartStatus" class="donut-flex"></div></div>
+      <div class="stat-card wide"><h3>🗂️ 大类资产配置对比（按估算市值占比）</h3>
+        <div class="legend"><span><i style="background:#1a73e8"></i>官方</span><span><i style="background:#34a853"></i>用户</span></div>
+        <div id="chartAlloc"></div>
+      </div>
+      <div class="stat-card"><h3>🏆 官方累计收益 TOP10</h3><div id="chartReturn"></div></div>
+      <div class="stat-card"><h3>📐 仓位偏差 TOP10（官方−用户）</h3><div id="chartDev"></div></div>
+      <div class="stat-card wide"><h3>📑 分类明细统计</h3><div id="catTable"></div><div id="missingList" style="margin-top:10px;"></div>
+        <p style="font-size:11px; color:#999; margin-top:8px;">注：估算市值 = 份数 × 官方每份单位价值(unitValue)，现金按1计，仅用于结构对比参考。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="syncModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeSyncModal()">&times;</button>
+    <h2>🔄 同步最新数据（Network 抓包法）</h2>
+    <p style="font-size:13px; color:#d93025; font-weight:600; margin-bottom:12px;">⚠️ 核心要点：请务必在 <code>Response</code> (响应) 标签下复制，不要在 <code>Preview</code> 标签下复制！</p>
+    <ol>
+      <li>在且慢官网按 <strong>F12</strong>，点击顶部的 <strong>Network (网络)</strong> 标签。</li>
+      <li>在过滤框输入 <code>plan</code>，然后 <strong>刷新页面 (F5)</strong>。</li>
+      <li>找到 <code>plan?prodCode=LONG_WIN</code> 请求并点击，在右侧 <strong>Response</strong> 标签中 <strong>Ctrl+A</strong> 全选、<strong>Ctrl+C</strong> 复制，粘贴到下方框1。</li>
+      <li>同理，将 <code>plan?prodCode=LONG_WIN_S</code> 的 Response 内容粘贴到下方框2。</li>
+      <li>点击【解析并应用数据】。若官方有新增基金，将自动并入列表并提示。</li>
+    </ol>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div><label style="font-size:12px; font-weight:600;">1. 150计划 Response 数据：</label>
+        <textarea id="pasteLongWin" placeholder="粘贴 LONG_WIN 的 Response 纯文本..." style="height:120px; margin-top:4px;"></textarea></div>
+      <div><label style="font-size:12px; font-weight:600;">2. S计划 Response 数据：</label>
+        <textarea id="pasteLongWinS" placeholder="粘贴 LONG_WIN_S 的 Response 纯文本..." style="height:120px; margin-top:4px;"></textarea></div>
+    </div>
+    <button class="btn btn-success" onclick="applyManualNetworkPaste()">✅ 解析并应用数据</button>
+    <button class="btn btn-secondary" onclick="closeSyncModal()">关闭</button>
+  </div>
+</div>
+
+<script type="application/json" id="default-data"></script>
+<script>
+const PLAN_CONFIG = { 'LONG_WIN': { name: '150计划', totalUnits: 150 }, 'LONG_WIN_S': { name: 'S计划', totalUnits: 100 } };
+let currentPlan = 'LONG_WIN', currentView = 'detail', planData = {};
+let userShares = JSON.parse(localStorage.getItem('lw_user_shares') || '{}');
+let userNotes = JSON.parse(localStorage.getItem('lw_user_notes') || '{}');
+let settings = JSON.parse(localStorage.getItem('lw_settings') || '{"tolerance":10,"minDiff":1}');
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function fundKeyOf(fi, variety){ return currentPlan + '|' + (fi&&fi.fundCode||'') + '|' + (variety||''); }
+
+function init(){
+  const cached = localStorage.getItem('lw_cache');
+  if (cached) { try { planData = JSON.parse(cached); document.getElementById('statusText').textContent = '已加载本地缓存数据'; } catch(e){ loadDefaultData(); } }
+  else loadDefaultData();
+  migrateLegacyKeys();
+  render(); updateLastUpdate();
+}
+function loadDefaultData(){
+  planData = JSON.parse(document.getElementById('default-data').textContent);
+  document.getElementById('statusText').textContent = '已加载内置最新数据';
+}
+/* 旧版 key(PLAN_代码) 迁移到新版 key(PLAN|代码|品种)，保证已填数据不丢 */
+function migrateLegacyKeys(){
+  const re = /^(LONG_WIN_S|LONG_WIN)_(\d{6})$/;
+  [userShares, userNotes].forEach(store => {
+    Object.keys(store).forEach(k => {
+      if (k.includes('|')) return;
+      const m = k.match(re); if (!m) return;
+      const pd = planData[m[1]]; if (!pd) return;
+      let best = null;
+      (pd.composition||[]).forEach(c => (c.compList||[]).forEach(f => {
+        if (f.isCash || !f.fund || f.fund.fundCode !== m[2]) return;
+        if (!best || ((f.planUnit||0)>0 && (best.planUnit||0)===0)) best = f;
+      }));
+      if (best) { const nk = m[1]+'|'+m[2]+'|'+(best.variety||best.fund.fundName||''); if (!(nk in store)) store[nk] = store[k]; }
+      delete store[k];
+    });
+  });
+  localStorage.setItem('lw_user_shares', JSON.stringify(userShares));
+  localStorage.setItem('lw_user_notes', JSON.stringify(userNotes));
+}
+
+function classify(o,u){
+  if (u===0 && o===0) return 'none';
+  if (o===0 && u>0) return 'clear';
+  if (u===0 && o>0) return 'build';
+  const d=o-u, tol=settings.tolerance/100, minD=settings.minDiff;
+  if (Math.abs(d)>=minD && Math.abs(d)/Math.max(u,1)>tol) return d>0?'add':'reduce';
+  return 'match';
+}
+function adviceBadge(cls){
+  return {none:'<span class="advice-badge advice-none">-</span>',clear:'<span class="advice-badge advice-sell">⬇ 清仓</span>',build:'<span class="advice-badge advice-buy">⬆ 建仓</span>',add:'<span class="advice-badge advice-buy">⬆ 加仓</span>',reduce:'<span class="advice-badge advice-sell">⬇ 减仓</span>',match:'<span class="advice-badge advice-hold">✓ 持有</span>'}[cls];
+}
+
+function render(){
+  if (!planData[currentPlan]) return;
+  renderInfo();
+  const dw = document.getElementById('detailWrap'), sw = document.getElementById('statsWrap');
+  if (currentView === 'detail') { dw.classList.remove('hidden'); sw.classList.add('hidden'); renderTable(); renderSummary(); }
+  else { dw.classList.add('hidden'); sw.classList.remove('hidden'); renderStats(); }
+}
+
+function renderInfo(){
+  const d = planData[currentPlan], p = PLAN_CONFIG[currentPlan]; if(!d) return;
+  const ar=(d.annualCompoundedReturn*100).toFixed(2), dr=(d.dailyReturn*100).toFixed(2), md=(d.maxDrawdown*100).toFixed(2), nd=new Date(d.navDate).toLocaleDateString('zh-CN');
+  document.getElementById('planInfo').innerHTML = `<h2>${p.name} 策略概览</h2>
+  <div class="plan-stats">
+    <div class="stat-item"><div class="stat-value">${ar}%</div><div class="stat-label">年化收益</div></div>
+    <div class="stat-item"><div class="stat-value ${dr>=0?'positive':'negative'}">${dr}%</div><div class="stat-label">日涨跌</div></div>
+    <div class="stat-item"><div class="stat-value negative">${md}%</div><div class="stat-label">最大回撤</div></div>
+    <div class="stat-item"><div class="stat-value">${d.nav}</div><div class="stat-label">净值 <span class="nav-date">${nd}</span></div></div>
+    <div class="stat-item"><div class="stat-value">${d.investedUnit||0}/${p.totalUnits}</div><div class="stat-label">已投/总份</div></div>
+  </div>`;
+}
+
+function renderTable(){
+  const d = planData[currentPlan], container = document.getElementById('compositionContainer');
+  container.innerHTML = '';
+  (d.composition || []).forEach(cat => {
+    if (cat.unit === 0 && !cat.isCash) return;
+    const sec = document.createElement('div'); sec.className = 'category-section';
+    sec.innerHTML = `<div class="category-header"><h3>${cat.className}</h3>
+      <div class="category-meta"><span><strong>${cat.unit}</strong>份</span>
+      <span>占比 <strong>${(cat.percent*100).toFixed(2)}%</strong></span>
+      ${cat.accProfitRate!==null?`<span>累计收益 <strong class="${cat.accProfitRate>=0?'positive-return':'negative-return'}">${(cat.accProfitRate*100).toFixed(2)}%</strong></span>`:''}</div></div>`;
+    if (cat.compList && cat.compList.length) {
+      let rows = '';
+      cat.compList.forEach(f => {
+        if (f.isCash) { rows += `<tr><td><span class="fund-name">现金(未投入)</span></td><td>-</td><td>-</td><td>${f.planUnit||0}</td><td>${((f.percent||0)*100).toFixed(2)}%</td><td>${f.accProfit?((f.accProfit*100).toFixed(2)+'%'):'-'}</td><td colspan="4" style="color:#999;">-</td></tr>`; return; }
+        const fi = f.fund || {}, key = currentPlan+'|'+fi.fundCode+'|'+(f.variety||fi.fundName||'');
+        const us = userShares[key] !== undefined ? userShares[key] : '';
+        const note = userNotes[key] || '';
+        const ou = f.planUnit || 0, un = parseFloat(us) || 0, diff = ou - un;
+        const diffStyle = diff>0?'color:#ea4335':diff<0?'color:#1a73e8':'color:#333';
+        rows += `<tr>
+          <td><span class="fund-name">${esc(f.variety||fi.fundName||'-')}</span></td>
+          <td><span class="fund-code">${fi.fundCode||'-'}</span></td>
+          <td style="font-size:12px;color:#666;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(fi.fundName||'')}">${esc(fi.fundName||'-')}</td>
+          <td><strong>${ou}</strong></td>
+          <td>${((f.percent||0)*100).toFixed(2)}%</td>
+          <td><span class="${(f.accProfit||0)>=0?'positive-return':'negative-return'}">${((f.accProfit||0)*100).toFixed(2)}%</span></td>
+          <td><input type="number" class="shares-input" value="${us}" data-key="${key}" onchange="onShareChange(this)" min="0" step="0.1" placeholder="输入"></td>
+          <td><strong style="${diffStyle}">${diff>0?'+'+diff:diff}</strong></td>
+          <td>${adviceBadge(classify(ou,un))}</td>
+          <td><input type="text" class="note-input" value="${esc(note)}" data-key="${key}" onchange="onNoteChange(this)" placeholder="备注"></td>
+        </tr>`;
+      });
+      sec.innerHTML += `<table><thead><tr><th>品种</th><th>代码</th><th>基金全称</th><th>官方份数</th><th>占比</th><th>累计收益</th><th>跟投份数</th><th>偏差</th><th>建议</th><th>备注</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    container.appendChild(sec);
+  });
+}
+
+function renderSummary(){
+  const d = planData[currentPlan]; if (!d) return;
+  const buys = [], sells = [];
+  (d.composition||[]).forEach(cat => (cat.compList||[]).forEach(f => {
+    if (f.isCash) return; const fi = f.fund || {}, key = currentPlan+'|'+fi.fundCode+'|'+(f.variety||fi.fundName||'');
+    const un = parseFloat(userShares[key]) || 0, ou = f.planUnit || 0, cls = classify(ou, un), name = f.variety || fi.fundName;
+    if (cls==='add') buys.push(`${name}: 加仓${ou-un}份`);
+    else if (cls==='build') buys.push(`${name}: 建仓${ou}份`);
+    else if (cls==='reduce') sells.push(`${name}: 减仓${un-ou}份`);
+    else if (cls==='clear') sells.push(`${name}: 清仓(持有${un}份)`);
+  }));
+  const el = document.getElementById('adviceSummary');
+  if (!buys.length && !sells.length) { el.innerHTML = `<h3>📋 调仓建议汇总</h3><p class="empty-msg">暂无调仓建议。请在表格中填写"跟投份数"，系统将自动对比并给出建议；"备注"列可记录你的操作计划。</p>`; return; }
+  el.innerHTML = `<h3>📋 调仓建议汇总</h3><div class="advice-grid">
+    ${buys.length?`<div class="advice-card buy"><h4>🟢 建议买入/加仓</h4><ul>${buys.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}
+    ${sells.length?`<div class="advice-card sell"><h4>🔴 建议卖出/减仓</h4><ul>${sells.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:''}</div>`;
+}
+
+/* ============ 统计分析 ============ */
+function collectRows(){
+  const d = planData[currentPlan], rows = [], catMap = {};
+  (d.composition||[]).forEach(c => (c.compList||[]).forEach(f => {
+    if (f.isCash) return;
+    const fi = f.fund || {};
+    const key = currentPlan+'|'+fi.fundCode+'|'+(f.variety||fi.fundName||'');
+    const ou = f.planUnit||0, uv = f.unitValue||0, un = parseFloat(userShares[key])||0;
+    rows.push({ cat:c.className, key, code:fi.fundCode, name:f.variety||fi.fundName||'-', ou, uv, un, acc:f.accProfit||0, diff:ou-un, cls:classify(ou,un) });
+    if (!catMap[c.className]) catMap[c.className] = { cat:c.className, ou:0, un:0, ov:0, uv:0 };
+    catMap[c.className].ou += ou; catMap[c.className].un += un;
+    catMap[c.className].ov += ou*uv; catMap[c.className].uv += un*uv;
+  }));
+  return { rows, cats: Object.values(catMap) };
+}
+function donutSVG(p, color, label){
+  const r=54, c=2*Math.PI*r, dash=c*Math.min(Math.max(p,0),100)/100;
+  return `<svg viewBox="0 0 140 140" width="150" height="150">
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="#e8eaed" stroke-width="14"/>
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color}" stroke-width="14" stroke-dasharray="${dash.toFixed(1)} ${(c-dash).toFixed(1)}" stroke-dashoffset="${(c*0.25).toFixed(1)}" stroke-linecap="round"/>
+    <text x="70" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="#333">${p.toFixed(1)}%</text>
+    <text x="70" y="90" text-anchor="middle" font-size="11" fill="#666">${label}</text></svg>`;
+}
+function pieSVG(segs){
+  const total = segs.reduce((s,x)=>s+x.v,0);
+  if (!total) return '<p class="empty-msg">暂无统计数据</p>';
+  const r=40, c=2*Math.PI*r; let acc=0;
+  const circles = segs.filter(s=>s.v>0).map(s => {
+    const frac = s.v/total, off = c*0.25 - acc*c; acc += frac;
+    return `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${s.c}" stroke-width="26" stroke-dasharray="${(frac*c).toFixed(2)} ${(c-frac*c).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 120 120" width="150" height="150">${circles}</svg>`;
+}
+function renderStats(){
+  const { rows, cats } = collectRows();
+  const tot = rows.reduce((a,r)=>({ou:a.ou+r.ou, un:a.un+r.un, ov:a.ov+r.ou*r.uv, uv:a.uv+r.un*r.uv}), {ou:0,un:0,ov:0,uv:0});
+  const shareRate = tot.ou ? tot.un/tot.ou*100 : 0, valueRate = tot.ov ? tot.uv/tot.ov*100 : 0;
+  const cnt = { match:0, add:0, reduce:0, build:0, clear:0 };
+  rows.forEach(r => { if (r.ou>0 || r.un>0) cnt[r.cls]++; });
+
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi"><div class="v" style="color:#1a73e8">${shareRate.toFixed(1)}%</div><div class="l">跟投完成度(份数)</div></div>
+    <div class="kpi"><div class="v" style="color:#34a853">${valueRate.toFixed(1)}%</div><div class="l">跟投完成度(市值)</div></div>
+    <div class="kpi"><div class="v">${tot.ov.toFixed(1)}</div><div class="l">官方估算总市值</div></div>
+    <div class="kpi"><div class="v">${tot.uv.toFixed(1)}</div><div class="l">用户估算总市值</div></div>
+    <div class="kpi"><div class="v">${rows.filter(r=>r.ou>0).length}</div><div class="l">官方在持基金数</div></div>
+    <div class="kpi"><div class="v" style="color:#ea4335">${cnt.add+cnt.build}</div><div class="l">需加仓/建仓</div></div>
+    <div class="kpi"><div class="v" style="color:#1a73e8">${cnt.reduce+cnt.clear}</div><div class="l">需减仓/清仓</div></div>
+    <div class="kpi"><div class="v" style="color:#34a853">${cnt.match}</div><div class="l">已达标</div></div>`;
+
+  document.getElementById('chartCompletion').innerHTML = donutSVG(shareRate,'#1a73e8','份数完成度') + donutSVG(valueRate,'#34a853','市值完成度');
+
+  const segs = [ {v:cnt.match,c:'#34a853',l:'已达标'},{v:cnt.add,c:'#fbbc04',l:'需加仓'},{v:cnt.reduce,c:'#ea4335',l:'需减仓'},{v:cnt.build,c:'#1a73e8',l:'需建仓'},{v:cnt.clear,c:'#9c27b0',l:'需清仓'} ];
+  document.getElementById('chartStatus').innerHTML = pieSVG(segs) + `<div class="pie-legend">${segs.map(s=>`<div><i style="background:${s.c}"></i>${s.l}：${s.v} 只</div>`).join('')}</div>`;
+
+  const oSum = cats.reduce((s,c)=>s+c.ov,0)||1, uSum = cats.reduce((s,c)=>s+c.uv,0)||1;
+  document.getElementById('chartAlloc').innerHTML = cats.map(c => {
+    const op = c.ov/oSum*100, up = c.uv/uSum*100;
+    return `<div class="hbar-row">
+      <div class="hbar-label"><span>${c.cat}</span><span>官方 ${op.toFixed(1)}% ｜ 用户 ${up.toFixed(1)}%</span></div>
+      <div class="hbar-track" style="margin-bottom:3px"><div class="hbar-fill" style="width:${Math.min(op,100).toFixed(1)}%;background:#1a73e8"></div></div>
+      <div class="hbar-track"><div class="hbar-fill" style="width:${Math.min(up,100).toFixed(1)}%;background:#34a853"></div></div>
+    </div>`; }).join('');
+
+  const topRet = rows.filter(r=>r.ou>0).sort((a,b)=>b.acc-a.acc).slice(0,10);
+  const maxAbs = topRet.length ? Math.max(...topRet.map(r=>Math.abs(r.acc))) : 1;
+  document.getElementById('chartReturn').innerHTML = topRet.map(r => `<div class="hbar-row">
+    <div class="hbar-label"><span>${esc(r.name)}</span><span class="${r.acc>=0?'positive-return':'negative-return'}">${(r.acc*100).toFixed(2)}%</span></div>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${(Math.abs(r.acc)/maxAbs*100).toFixed(1)}%;background:${r.acc>=0?'#34a853':'#ea4335'}"></div></div>
+  </div>`).join('') || '<p class="empty-msg">暂无数据</p>';
+
+  const topDev = rows.filter(r=>r.ou>0||r.un>0).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,10);
+  const maxDev = topDev.length ? Math.max(...topDev.map(r=>Math.abs(r.diff))) : 1;
+  document.getElementById('chartDev').innerHTML = topDev.map(r => `<div class="hbar-row">
+    <div class="hbar-label"><span>${esc(r.name)}</span><span style="color:${r.diff>0?'#ea4335':r.diff<0?'#1a73e8':'#333'}">${r.diff>0?'+':''}${r.diff} 份</span></div>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${(Math.abs(r.diff)/maxDev*100).toFixed(1)}%;background:${r.diff>0?'#ea4335':r.diff<0?'#1a73e8':'#9e9e9e'}"></div></div>
+  </div>`).join('') || '<p class="empty-msg">暂无数据</p>';
+
+  let html = `<table><thead><tr><th>类别</th><th>官方份数</th><th>用户份数</th><th>份数完成度</th><th>官方估算市值</th><th>用户估算市值</th><th>市值完成度</th></tr></thead><tbody>`;
+  cats.forEach(c => { html += `<tr><td>${c.cat}</td><td>${c.ou}</td><td>${c.un}</td><td>${c.ou?(c.un/c.ou*100).toFixed(1)+'%':'-'}</td><td>${c.ov.toFixed(2)}</td><td>${c.uv.toFixed(2)}</td><td>${c.ov?(c.uv/c.ov*100).toFixed(1)+'%':'-'}</td></tr>`; });
+  html += `<tr style="font-weight:700;background:#f8f9fa"><td>合计</td><td>${tot.ou}</td><td>${tot.un}</td><td>${tot.ou?shareRate.toFixed(1)+'%':'-'}</td><td>${tot.ov.toFixed(2)}</td><td>${tot.uv.toFixed(2)}</td><td>${tot.ov?valueRate.toFixed(1)+'%':'-'}</td></tr></tbody></table>`;
+  document.getElementById('catTable').innerHTML = html;
+
+  const exist = new Set(rows.map(r=>r.key));
+  const miss = [...new Set([...Object.keys(userShares), ...Object.keys(userNotes)])]
+    .filter(k => k.startsWith(currentPlan+'|') && !exist.has(k) && ((parseFloat(userShares[k])||0) > 0 || (userNotes[k]||'') !== ''));
+  document.getElementById('missingList').innerHTML = miss.length ? `<p style="font-size:12px;color:#d93025">⚠️ 以下跟投记录不在当前官方列表中（可能已更名/调整）：${miss.map(k=>esc(k.split('|')[2])).join('、')}</p>` : '';
+}
+
+/* ============ 交互 ============ */
+function switchPlan(code, btn){ currentPlan = code; document.querySelectorAll('.controls .tabs')[0].querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); btn.classList.add('active'); render(); }
+function switchView(v){ currentView = v;
+  document.getElementById('viewDetailTab').classList.toggle('active', v==='detail');
+  document.getElementById('viewStatsTab').classList.toggle('active', v==='stats');
+  render(); }
+function onShareChange(inp){ const k=inp.dataset.key, v=inp.value; if (v==='') delete userShares[k]; else userShares[k]=parseFloat(v); localStorage.setItem('lw_user_shares', JSON.stringify(userShares)); render(); }
+function onNoteChange(inp){ const k=inp.dataset.key, v=inp.value; if (v==='') delete userNotes[k]; else userNotes[k]=v; localStorage.setItem('lw_user_notes', JSON.stringify(userNotes)); }
+function toggleSettings(){ const p=document.getElementById('settingsPanel'); p.classList.toggle('hidden'); if (!p.classList.contains('hidden')) { document.getElementById('toleranceInput').value=settings.tolerance; document.getElementById('minDiffInput').value=settings.minDiff; } }
+function saveSettings(){ settings.tolerance=parseInt(document.getElementById('toleranceInput').value)||10; settings.minDiff=parseInt(document.getElementById('minDiffInput').value)||1; localStorage.setItem('lw_settings', JSON.stringify(settings)); render(); toggleSettings(); }
+function updateLastUpdate(){ const t=localStorage.getItem('lw_update'); if (t) document.getElementById('lastUpdate').textContent = `上次同步: ${new Date(t).toLocaleString('zh-CN')}`; }
+function exportData(){ const obj={userShares,userNotes,settings,planData,exported:new Date().toISOString()}; const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`longwin_${new Date().toISOString().slice(0,10)}.json`; a.click(); }
+function importData(){ const inp=document.createElement('input'); inp.type='file'; inp.accept='.json'; inp.onchange=e=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ try{ const d=JSON.parse(ev.target.result); if(d.userShares){userShares=d.userShares;localStorage.setItem('lw_user_shares',JSON.stringify(userShares));} if(d.userNotes){userNotes=d.userNotes;localStorage.setItem('lw_user_notes',JSON.stringify(userNotes));} if(d.settings){settings=d.settings;localStorage.setItem('lw_settings',JSON.stringify(settings));} if(d.planData){planData=d.planData;localStorage.setItem('lw_cache',JSON.stringify(planData));localStorage.setItem('lw_update',new Date().toISOString());} render(); updateLastUpdate(); alert('导入成功！'); }catch(err){ alert('文件格式错误'); } }; r.readAsText(f); }; inp.click(); }
+
+function openSyncModal(){ document.getElementById('syncModal').classList.add('active'); }
+function closeSyncModal(){ document.getElementById('syncModal').classList.remove('active'); }
+
+function diffFunds(oldD, newD){
+  const oldSet = new Set();
+  (oldD&&oldD.composition||[]).forEach(c=>(c.compList||[]).forEach(f=>{ if(!f.isCash&&f.fund) oldSet.add(f.fund.fundCode+'|'+(f.variety||'')); }));
+  const added = [];
+  (newD&&newD.composition||[]).forEach(c=>(c.compList||[]).forEach(f=>{ if(!f.isCash&&f.fund&&!oldSet.has(f.fund.fundCode+'|'+(f.variety||''))) added.push(f.variety||f.fund.fundName); }));
+  return added;
+}
+
+function applyManualNetworkPaste(){
+  let text1 = document.getElementById('pasteLongWin').value;
+  let text2 = document.getElementById('pasteLongWinS').value;
+  if (!text1.trim() || !text2.trim()) { alert('请确保两个文本框都已粘贴了数据。'); return; }
+  const cleanJson = str => {
+    str = str.replace(/^\uFEFF/,'').trim();
+    if (str.startsWith('<')) throw new Error('复制内容包含HTML标签，请在 Response 标签下复制纯文本');
+    const m = str.match(/\{[\s\S]*\}/); return m ? m[0] : str;
+  };
+  let d1, d2;
+  try { d1 = JSON.parse(cleanJson(text1)); } catch(e){ alert('❌ 150计划数据解析失败：'+e.message+'\n\n你复制的内容开头是："'+text1.trim().substring(0,40)+'..."\n请务必在【Response】标签下全选纯文本复制！'); return; }
+  try { d2 = JSON.parse(cleanJson(text2)); } catch(e){ alert('❌ S计划数据解析失败：'+e.message+'\n\n你复制的内容开头是："'+text2.trim().substring(0,40)+'..."\n请务必在【Response】标签下全选纯文本复制！'); return; }
+  if (!d1.composition || !d2.composition) { alert('JSON格式正确，但缺少 composition 字段。请确认复制的是 plan?prodCode 请求的响应。'); return; }
+
+  const added = [];
+  if (planData.LONG_WIN) added.push(...diffFunds(planData.LONG_WIN, d1).map(n=>'150计划·'+n));
+  if (planData.LONG_WIN_S) added.push(...diffFunds(planData.LONG_WIN_S, d2).map(n=>'S计划·'+n));
+
+  planData = { LONG_WIN: d1, LONG_WIN_S: d2 };
+  localStorage.setItem('lw_cache', JSON.stringify(planData));
+  localStorage.setItem('lw_update', new Date().toISOString());
+  render(); updateLastUpdate();
+  document.getElementById('statusText').textContent = '数据同步成功！';
+  document.getElementById('statusText').style.color = '#34a853';
+  closeSyncModal();
+  alert('✅ 数据应用成功！' + (added.length ? '\n\n🆕 检测到新增基金并已并入列表：\n' + added.join('、') : '\n本次同步未发现新增基金。'));
+}
+
+init();
+</script>
+</body>
+</html>
